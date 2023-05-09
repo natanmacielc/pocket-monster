@@ -18,12 +18,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
 public class Stats {
     @Id
     @GeneratedValue
     private Long id;
-    @Setter
     private Double total;
     @OneToMany(mappedBy = "stats", cascade = CascadeType.ALL)
     @JsonIgnore

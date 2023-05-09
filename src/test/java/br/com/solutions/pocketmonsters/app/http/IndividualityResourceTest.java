@@ -85,13 +85,13 @@ class IndividualityResourceTest {
 
     @Test
     void update() {
-        Individuality request = Individuality.builder().id(1L).name("Blastoise").build();
+        Individuality request = Individuality.builder().name("Blastoise").build();
         HttpEntity<Individuality> httpEntity = new HttpEntity<>(request);
 
         ResponseEntity<Individuality> response = testRestTemplate
-                .exchange(URL, HttpMethod.PUT, httpEntity, Individuality.class);
+                .exchange(URL + 1, HttpMethod.PUT, httpEntity, Individuality.class);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(request.getName(), response.getBody().getName());
     }
 }

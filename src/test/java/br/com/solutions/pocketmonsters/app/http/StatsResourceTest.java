@@ -77,13 +77,13 @@ class StatsResourceTest {
 
     @Test
     void update() {
-        Stats request = Stats.builder().id(1L).total(200.0).build();
+        Stats request = Stats.builder().total(200.0).build();
         HttpEntity<Stats> httpEntity = new HttpEntity<>(request);
 
         ResponseEntity<Stats> response = testRestTemplate
-                .exchange(URL, HttpMethod.PUT, httpEntity, Stats.class);
+                .exchange(URL + 1, HttpMethod.PUT, httpEntity, Stats.class);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(request.getTotal(), response.getBody().getTotal());
     }
 }

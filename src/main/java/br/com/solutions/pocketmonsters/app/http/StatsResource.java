@@ -53,13 +53,9 @@ public class StatsResource {
         return ResponseEntity.created(location).body(entity);
     }
 
-    @PutMapping
-    public ResponseEntity<Stats> update(@RequestBody Stats stats) {
-        Stats entity = statsUseCase.update(stats);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(entity.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(entity);
+    @PutMapping("/{id}")
+    public ResponseEntity<Stats> update(@PathVariable Long id, @RequestBody Stats stats) {
+        stats.setId(id);
+        return ResponseEntity.ok(statsUseCase.update(stats, id));
     }
 }

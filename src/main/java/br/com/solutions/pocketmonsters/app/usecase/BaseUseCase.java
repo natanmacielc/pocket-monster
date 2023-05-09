@@ -1,5 +1,6 @@
 package br.com.solutions.pocketmonsters.app.usecase;
 
+import br.com.solutions.pocketmonsters.app.exception.NotFoundException;
 import br.com.solutions.pocketmonsters.utils.QueryBuilder;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,7 +14,7 @@ public abstract class BaseUseCase<T> {
     private final JpaRepository<T, Long> repository;
     private final Class<T> clazz;
 
-    public BaseUseCase(EntityManager entityManager, Class<T> clazz, JpaRepository repository) {
+    public BaseUseCase(EntityManager entityManager, Class<T> clazz, JpaRepository<T, Long> repository) {
         this.entityManager = entityManager;
         this.clazz = clazz;
         this.repository = repository;
@@ -24,11 +25,7 @@ public abstract class BaseUseCase<T> {
     }
 
     public T findById(Long id) {
-        try {
-            return repository.findById(id).orElseThrow(() -> new RuntimeException("Não existe esse objeto na base de dados"));
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+        return repository.findById(id).orElseThrow(() -> new NotFoundException(id));
     }
 
     @Transactional
@@ -52,19 +49,23 @@ public abstract class BaseUseCase<T> {
         );
         queryBuilder.insertParameters(query);
         prePersist(objects.get(0));
-        return (List<T>) query.getResultList();
+        return query.getResultList();
     }
 
     @Transactional
-    public T update(T object) {
-        QueryBuilder queryBuilder = QueryBuilder.updateQuery(object);
-        Query query = entityManager.createNativeQuery(
-                queryBuilder.getQuery(),
-                clazz
-        );
-        queryBuilder.updateParameters(query);
-        preUpdate(object);
-        return (T) query.getSingleResult();
+    public T update(T object, Long id) {
+        if (repository.existsById(id)) {
+            QueryBuilder queryBuilder = QueryBuilder.updateQuery(object);
+            Query query = entityManager.createNativeQuery(
+                    queryBuilder.getQuery(),
+                    clazz
+            );
+            queryBuilder.updateParameters(query);
+            preUpdate(object);
+            return (T) query.getSingleResult();
+        } else {
+            throw new NotFoundException(id);
+        }
     }
 
     protected void prePersist(T object) {}

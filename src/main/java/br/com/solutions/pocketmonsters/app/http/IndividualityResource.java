@@ -47,19 +47,15 @@ public class IndividualityResource {
     public ResponseEntity<List<Individuality>> saveAll(@RequestBody List<Individuality> individualities) {
         List<Individuality> entity = individualityUseCase.saveAll(individualities);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
+                .path("/all")
                 .buildAndExpand(entity.get(0).getId())
                 .toUri();
         return ResponseEntity.created(location).body(entity);
     }
 
-    @PutMapping
-    public ResponseEntity<Individuality> update(@RequestBody Individuality individuality) {
-        Individuality entity = individualityUseCase.update(individuality);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(entity.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(entity);
+    @PutMapping("/{id}")
+    public ResponseEntity<Individuality> update(@PathVariable Long id, @RequestBody Individuality individuality) {
+        individuality.setId(id);
+        return ResponseEntity.ok(individualityUseCase.update(individuality, id));
     }
 }

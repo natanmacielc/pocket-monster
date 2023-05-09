@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,5 +41,11 @@ public class BaseStatResource {
     public ResponseEntity<List<BaseStat>> findAll() {
         List<BaseStat> baseStatList = baseStatUseCase.findAll();
         return ResponseEntity.ok(baseStatList);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BaseStat> update(@PathVariable Long id, @RequestBody BaseStat baseStat) {
+        baseStat.setId(id);
+        return ResponseEntity.ok(baseStatUseCase.update(baseStat, id));
     }
 }
